@@ -1,6 +1,7 @@
 package com.example.seckilldemo.controller;
 
 import com.example.seckilldemo.entity.TUser;
+import com.example.seckilldemo.rabbitmq.MQSender;
 import com.example.seckilldemo.service.ITUserService;
 import com.example.seckilldemo.utils.MD5Util;
 import com.example.seckilldemo.vo.RespBean;
@@ -32,12 +33,28 @@ public class TUserController {
 
     @Autowired
     private ITUserService tUserService;
+    @Autowired
+    private MQSender mqSender;
 
     @RequestMapping("/info")
     @ResponseBody
     public RespBean info(TUser user) {
         return RespBean.success(user);
     }
+
+
+    @RequestMapping("/mq")
+    @ResponseBody
+    public void mq() {
+        mqSender.send("Hello");
+    }
+
+    @RequestMapping("/mq/fanout")
+    @ResponseBody
+    public void mqFanout() {
+        mqSender.send("Hello");
+    }
+
 
     @GetMapping("/createuser")
     public void CreateUser() throws IOException {
