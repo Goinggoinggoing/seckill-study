@@ -1,0 +1,66 @@
+spring:
+  #静态资源处理
+  resources:
+    #启动默认静态资源处理，默认启动
+    add-mappings: true
+    cache:
+      cachecontrol:
+        #缓存响应时间，单位秒
+        max-age: 3600
+    chain:
+      #资源配链启动缓存，默认启动
+      cache: true
+      #启动资源链，默认禁用
+      enabled: true
+      #启用压缩资源（gzip，brotil）解析，默认禁用
+      compressed: true
+      #启用h5应用缓存，默认禁用
+      html-application-cache: true
+    static-locations: classpath:/static/
+
+  thymeleaf:
+    cache: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/seckill?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    hikari:
+      pool-name: DateHikariCP
+      minimum-idle: 5
+      #?????????????10??
+      idle-timeout: 1800000
+      #????????10
+      maximum-pool-size: 10
+      #?????????????
+      auto-commit: true
+      #?????????0?????????1800000?30???
+      max-lifetime: 1800000
+      #?????????30000?30??
+      connection-timeout: 3000
+      #?????????????
+      connection-test-query: SELECT 1
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+    timeout: 10000ms
+    lettuce:
+      pool:
+        #最大连接数 默认8
+        max-active: 8
+        #最大连接阻塞时间
+        max-wait: 1000ms
+        #最大空闲连接，默认8
+        max-idle: 200
+
+
+#mybatis-plus
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  type-aliases-package: com.example.seckilldemo
+
+logging:
+  level:
+    com.example.sekilldemo.mapper: debug

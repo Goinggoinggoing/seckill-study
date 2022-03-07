@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商品详情</title>
+    <!-- jquery -->
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css"/>
+    <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+    <!-- layer -->
+    <script type="text/javascript" src="/layer/layer.js"></script>
+    <!-- common.js -->
+    <script type="text/javascript" src="/js/common.js"></script>
+</head>
+<body>
+<div class="panel panel-default">
+    <div class="panel-heading">秒杀商品详情</div>
+    <div class="panel-body">
+        <span id="userTip"> 您还没有登录，请登陆后再操作<br/></span>
+        <span>没有收货地址的提示。。。</span>
+    </div>
+    <table class="table" id="goods">
+        <tr>
+            <td>商品名称</td>
+            <td colspan="3" id="goodsName"></td>
+        </tr>
+        <tr>
+            <td>商品图片</td>
+            <td colspan="3"><img id="goodsImg" width="200" height="200"/></td>
+        </tr>
+        <tr>
+            <td>秒杀开始时间</td>
+            <td id="startTime"></td>
+            <td>
+                <input type="hidden" id="remainSeconds">
+                <!--                <span th:if="${secKillStatus eq 0}">秒杀倒计时: <span id="countDown" th:text="${remainSeconds}"></span>秒-->
+                <!--                </span>-->
+                <!--                <span th:if="${secKillStatus eq 1}">秒杀进行中</span>-->
+                <!--                <span th:if="${secKillStatus eq 2}">秒杀已结束</span>-->
+                <span id="seckillTip"></span>
+            </td>
+            <td>
+                <!--                <form id="secKillForm" method="post" action="/seckill/doSeckill">-->
+                <!--                    <input type="hidden" name="goodsId" id="goodsId">-->
+                <!--                    <button class="btn btn-primary btn-block" type="submit" id="buyButton">立即秒杀</button>-->
+                <!--                </form>-->
+                <input type="hidden" name="goodsId" id="goodsId">
+                <button class="btn btn-primary btn-block" type="submit" id="buyButton" onclick="doSecKill()">立即秒杀
+                </button>
+            </td>
+        </tr>
+        <tr>
+            <td>商品原价</td>
+            <td colspan="3" id="goodsPrice"></td>
+        </tr>
+        <tr>
+            <td>秒杀价</td>
+            <td colspan="3" id="seckillPrice"></td>
+        </tr>
+        <tr>
+            <td>库存数量</td>
+            <td colspan="3" id="stockCount"></td>
+        </tr>
+    </table>
+</div>
+</body>
+<script>
+    $(function () {
+        // countDown();
+        getDetails();
+    });
+
+    //秒杀方法
+    function doSecKill() {
+        $.ajax({
+            url:'/seckill/doSeckill',
+            type: "POST",
+            data:{
+                goodsId:$('#goodsId').val()
+            },
+            success:function (data){
+                if (data.code==200){
+                    window.location.href="/orderDetail.html?orderId="+data.object.id;
+                }else {
+                    layer.msg(data.message);
+                }
+            }, error: function () {
+                layer.msg("客户端请求出错");
+            }
+
+        });
+    }
+
+    function getDetails() {
+        var goodsId = g_getQueryString("goodsId");
+        console.log(goodsId);
+        $.ajax({
+            url: '/goods/detail/' + goodsId,
+            type: 'GET',
+            success: function (data) {
+                if (data.code == 200) {
+                    render(data.object);
+                    countDown();
+                } else {
+                    layer.msg("客户端请求出错");
+                }
+            },
+            error: function () {
+                layer.msg("客户端请求出错");
+            }
+        })
+    }
+
+    function render(detail) {
+        var user = detail.tuser;
+        var goodsVo = detail.goodsVo;
+        var remainSeconds = detail.remainSeconds;
+        if (user) {
+            $("#userTip").hide();
+        }
+        $("#goodsName").text(goodsVo.goodsName);
+        $("#goodsImg").attr("src", goodsVo.goodsImg);
+        $("#startTime").text(new Date(goodsVo.startDate).format("yyyy-MM-dd HH:mm:ss"));
+        $("#remainSeconds").val(remainSeconds);
+        $("#goodsId").val(goodsVo.id);
+        $("#goodsPrice").text(goodsVo.seckillPrice);
+        $("#stockCount").text(goodsVo.stockCount);
+
+    }
+
+    function countDown() {
+        var remainSeconds = $("#remainSeconds").val();
+        var timeout;
+        //秒杀还未开始
+        if (remainSeconds > 0) {
+            $("#buyButton").attr("disabled", true);
+            $("#seckillTip").html("秒杀倒计时：" + remainSeconds + "秒");
+            timeout = setTimeout(function () {
+                // $("#countDown").text(remainSeconds - 1);
+                $("#remainSeconds").val(remainSeconds - 1);
+                countDown();
+            }, 1000);
+            // 秒杀进行中
+        } else if (remainSeconds == 0) {
+            $("#buyButton").attr("disabled", false);
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            $("#seckillTip").html("秒杀进行中")
+        } else {
+            $("#buyButton").attr("disabled", true);
+            $("#seckillTip").html("秒杀已经结束");
+        }
+    };
+
+</script>
+</html>

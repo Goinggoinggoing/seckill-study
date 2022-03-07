@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <!--    <title>订单详情</title>-->
+    <!--    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />-->
+    <!--    &lt;!&ndash; jquery &ndash;&gt;-->
+    <!--    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>-->
+    <!--    &lt;!&ndash; bootstrap &ndash;&gt;-->
+    <!--    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}" />-->
+    <!--    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>-->
+    <!--    &lt;!&ndash; layer &ndash;&gt;-->
+    <!--    <script type="text/javascript" th:src="@{/layer/layer.js}"></script>-->
+    <!--    &lt;!&ndash; common.js &ndash;&gt;-->
+    <!--    <script type="text/javascript" th:src="@{/js/common.js}"></script>-->
+
+    <title>订单详情</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!-- jquery -->
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css"
+          href="/bootstrap/css/bootstrap.min.css"/>
+    <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js">
+    </script>
+    <!-- layer -->
+    <script type="text/javascript" src="/layer/layer.js"></script>
+    <!-- common.js -->
+    <script type="text/javascript" src="/js/common.js"></script>
+
+</head>
+<body>
+<div class="panel panel-default">
+    <div class="panel-heading">秒杀订单详情</div>
+    <table class="table" id="order">
+        <tr>
+            <td>商品名称</td>
+            <!--            <td th:text="${goods.goodsName}" colspan="3"></td>-->
+            <td id="goodsName" colspan="3"></td>
+        </tr>
+        <tr>
+            <td>商品图片</td>
+            <!--            <td colspan="2"><img th:src="@{${goods.goodsImg}}" width="200" height="200" /></td>-->
+            <td colspan="2"><img id="goodsImg" width="200" height="200"/></td>
+        </tr>
+        <tr>
+            <td>订单价格</td>
+            <!--            <td colspan="2" th:text="${order.goodsPrice}"></td>-->
+            <td colspan="2" id="goodsPrice"></td>
+        </tr>
+        <tr>
+            <td>下单时间</td>
+            <!--            <td th:text="${#dates.format(order.createDate, 'yyyy-MM-dd HH:mm:ss')}" colspan="2"></td>-->
+            <td id="createDate" colspan="2"></td>
+        </tr>
+        <tr>
+            <td>订单状态</td>
+            <td id="status">
+                <!--                <span th:if="${order.status eq 0}">未支付</span>-->
+                <!--                <span th:if="${order.status eq 1}">待发货</span>-->
+                <!--                <span th:if="${order.status eq 2}">已发货</span>-->
+                <!--                <span th:if="${order.status eq 3}">已收货</span>-->
+                <!--                <span th:if="${order.status eq 4}">已退款</span>-->
+                <!--                <span th:if="${order.status eq 5}">已完成</span>-->
+            </td>
+            <td>
+                <button class="btn btn-primary btn-block" type="submit" id="payButton">立即支付</button>
+            </td>
+        </tr>
+        <tr>
+            <td>收货人</td>
+            <td colspan="2">XXX 18012345678</td>
+        </tr>
+        <tr>
+            <td>收货地址</td>
+            <td colspan="2">上海市浦东区世纪大道</td>
+        </tr>
+    </table>
+</div>
+<script>
+    $(function () {
+        getOrderDetail();
+    });
+
+    function getOrderDetail() {
+        var orderId = g_getQueryString("orderId");
+        $.ajax({
+            url: "/order/detail",
+            type: "GET",
+            data: {
+                orderId: orderId
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                    render(data.object);
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function () {
+                layer.msg("客户端请求错误")
+            }
+        });
+    }
+
+        function render(detail) {
+            var goods = detail.goodsVo;
+            var order = detail.order;
+            $("#goodsName").text(goods.goodsName);
+            $("#goodsImg").attr("src", goods.goodsImg);
+            $("#goodsPrice").text(order.goodsPrice);
+            $("#createDate").text(new Date(order.createDate).format("yyyy-MM-dd HH:mm:ss"));
+            var status = order.status;
+            var statusText = ""
+            switch (status) {
+                case 0:
+                    statusText = "未支付";
+                    break;
+                case 1:
+                    statusText = "待发货";
+                    break;
+                case 2:
+                    statusText = "已发货";
+                    break;
+                case 3:
+                    statusText = "已收货";
+                    break;
+                case 4:
+                    statusText = "已退款";
+                    break;
+                case 5:
+                    statusText = "已完成";
+                    break;
+            }
+            $("#status").text(statusText);
+        }
+</script>
+</body>
+</html>
