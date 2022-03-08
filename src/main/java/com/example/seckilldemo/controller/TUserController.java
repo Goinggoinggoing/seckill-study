@@ -43,17 +43,53 @@ public class TUserController {
     }
 
 
-    @RequestMapping("/mq")
-    @ResponseBody
-    public void mq() {
-        mqSender.send("Hello");
-    }
-
-    @RequestMapping("/mq/fanout")
-    @ResponseBody
-    public void mqFanout() {
-        mqSender.send("Hello");
-    }
+//    @RequestMapping("/mq")
+//    @ResponseBody
+//    public void mq() {
+//        mqSender.send("Hello");
+//    }
+//
+//    @RequestMapping("/mq/fanout")
+//    @ResponseBody
+//    public void mqFanout() {
+//        mqSender.send("Hello");
+//    }
+//
+//    @RequestMapping("/mq/direct01")
+//    @ResponseBody
+//    public void mqDirect01() {
+//        mqSender.send01("Hello Red");
+//    }
+//
+//    @RequestMapping("/mq/direct02")
+//    @ResponseBody
+//    public void mqDirect02() {
+//        mqSender.send02("Hello Green");
+//    }
+//
+//    @RequestMapping("/mq/topic01")
+//    @ResponseBody
+//    public void mqtopic01() {
+//        mqSender.send03("Hello Red");
+//    }
+//
+//    @RequestMapping("/mq/topic02")
+//    @ResponseBody
+//    public void mqtopic02() {
+//        mqSender.send04("Hello Green");
+//    }
+//
+//    @RequestMapping("/mq/header01")
+//    @ResponseBody
+//    public void header01() {
+//        mqSender.send05("Hello 01");
+//    }
+//
+//    @RequestMapping("/mq/header02")
+//    @ResponseBody
+//    public void header02() {
+//        mqSender.send06("Hello 02");
+//    }
 
 
     @GetMapping("/createuser")

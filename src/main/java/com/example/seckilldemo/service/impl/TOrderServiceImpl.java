@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +52,8 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
     @Transactional
     @Override
     public TOrder secKill(TUser user, GoodsVo goodsVo) {
+        ValueOperations valueOperations = redisTemplate.opsForValue();
+
         TSeckillGoods seckillGoods = itSeckillGoodsService.getOne(new QueryWrapper<TSeckillGoods>().eq("goods_id", goodsVo.getId()));
         seckillGoods.setStockCount(seckillGoods.getStockCount() - 1);
 //        itSeckillGoodsService.updateById(seckillGoods);
@@ -60,11 +63,17 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
 //                .gt("stock_count", 0)
 //        );
         boolean seckillGoodsResult = itSeckillGoodsService.update(new UpdateWrapper<TSeckillGoods>()
-                .setSql("stock_count = "+ "stock_count-1")
+                .setSql("stock_count = " + "stock_count-1")
                 .eq("goods_id", goodsVo.getId())
                 .gt("stock_count", 0)
         );
-        if (!seckillGoodsResult) {
+//        if (!seckillGoodsResult) {
+//            return null;
+//        }
+
+        if (seckillGoods.getStockCount() < 1) {
+            //判断是否还有库存
+            valueOperations.set("isStockEmpty:" + goodsVo.getId(), "0");
             return null;
         }
 

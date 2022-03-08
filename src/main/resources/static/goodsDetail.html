@@ -74,21 +74,57 @@
     //秒杀方法
     function doSecKill() {
         $.ajax({
-            url:'/seckill/doSeckill',
+            url: '/seckill/doSeckill',
             type: "POST",
-            data:{
-                goodsId:$('#goodsId').val()
+            data: {
+                goodsId: $('#goodsId').val()
             },
-            success:function (data){
-                if (data.code==200){
-                    window.location.href="/orderDetail.html?orderId="+data.object.id;
-                }else {
+            success: function (data) {
+                if (data.code == 200) {
+                    // window.location.href="/orderDetail.html?orderId="+data.object.id;
+                    getResult($("#goodsId").val());
+                } else {
                     layer.msg(data.message);
                 }
             }, error: function () {
                 layer.msg("客户端请求出错");
             }
 
+        });
+    }
+
+    function getResult(goodsId) {
+        g_showLoading();
+        $.ajax({
+            url: "/seckill/getResult",
+            type: "GET",
+            data: {
+                goodsId: goodsId
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                    var result = data.object;
+                    if (result < 0) {
+                        layer.msg("对不起，秒杀失败");
+                    } else if (result == 0) {
+                        setTimeout(function () {
+                            getResult(goodsId)
+                        });
+                    } else {
+                        layer.confirm("恭喜您，秒杀成功！查看订单？", {btn: ["确定", "取消"]},
+                            function () {
+                                window.location.href = "/orderDetail.html?orderId=" + result;
+                            },
+                            function () {
+                                layer.close();
+                            }
+                        )
+                    }
+                }
+            },
+            error: function () {
+                layer.msg("客户端请求错误");
+            }
         });
     }
 
