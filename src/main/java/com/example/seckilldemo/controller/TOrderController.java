@@ -6,8 +6,11 @@ import com.example.seckilldemo.vo.GoodsVo;
 import com.example.seckilldemo.vo.OrderDeatilVo;
 import com.example.seckilldemo.vo.RespBean;
 import com.example.seckilldemo.vo.RespBeanEnum;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,13 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/order")
+@Api(value = "订单", tags = "订单")
 public class TOrderController {
 
     @Autowired
     private ITOrderService itOrderService;
 
 
-    @RequestMapping("/detail")
+    @ApiOperation("订单")
+    @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @ResponseBody
     public RespBean detail(TUser tUser, Long orderId) {
         if (tUser == null) {

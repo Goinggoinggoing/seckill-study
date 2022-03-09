@@ -6,11 +6,10 @@ import com.example.seckilldemo.service.ITUserService;
 import com.example.seckilldemo.utils.MD5Util;
 import com.example.seckilldemo.vo.RespBean;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -28,6 +27,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/user")
+@Api(value = "用户表", tags = "用户表")
 public class TUserController {
 
 
@@ -36,56 +36,57 @@ public class TUserController {
     @Autowired
     private MQSender mqSender;
 
-    @RequestMapping("/info")
+    @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ResponseBody
+    @ApiOperation("返回用户信息")
     public RespBean info(TUser user) {
         return RespBean.success(user);
     }
 
 
-//    @RequestMapping("/mq")
+//    @RequestMapping(value = "/mq", method = RequestMethod.GET)
 //    @ResponseBody
 //    public void mq() {
 //        mqSender.send("Hello");
 //    }
 //
-//    @RequestMapping("/mq/fanout")
+//    @RequestMapping(value = "/mq/fanout", method = RequestMethod.GET)
 //    @ResponseBody
 //    public void mqFanout() {
 //        mqSender.send("Hello");
 //    }
 //
-//    @RequestMapping("/mq/direct01")
+//    @RequestMapping(value = "/mq/direct01", method = RequestMethod.GET)
 //    @ResponseBody
 //    public void mqDirect01() {
 //        mqSender.send01("Hello Red");
 //    }
 //
-//    @RequestMapping("/mq/direct02")
+//    @RequestMapping(value = "/mq/direct02", method = RequestMethod.GET)
 //    @ResponseBody
 //    public void mqDirect02() {
 //        mqSender.send02("Hello Green");
 //    }
 //
-//    @RequestMapping("/mq/topic01")
+//    @RequestMapping(value = "/mq/topic01", method = RequestMethod.GET)
 //    @ResponseBody
 //    public void mqtopic01() {
 //        mqSender.send03("Hello Red");
 //    }
 //
-//    @RequestMapping("/mq/topic02")
+//    @RequestMapping(value = "/mq/topic02", method = RequestMethod.GET)
 //    @ResponseBody
 //    public void mqtopic02() {
 //        mqSender.send04("Hello Green");
 //    }
 //
-//    @RequestMapping("/mq/header01")
+//    @RequestMapping(value = "/mq/header01", method = RequestMethod.GET)
 //    @ResponseBody
 //    public void header01() {
 //        mqSender.send05("Hello 01");
 //    }
 //
-//    @RequestMapping("/mq/header02")
+//    @RequestMapping(value = "/mq/header02", method = RequestMethod.GET)
 //    @ResponseBody
 //    public void header02() {
 //        mqSender.send06("Hello 02");
@@ -93,6 +94,7 @@ public class TUserController {
 
 
     @GetMapping("/createuser")
+    @ApiOperation("压测创建配置文件")
     public void CreateUser() throws IOException {
         List<TUser> list = new ArrayList<>();
         //生成用户

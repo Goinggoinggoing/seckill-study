@@ -6,6 +6,8 @@ import com.example.seckilldemo.service.ITUserService;
 import com.example.seckilldemo.vo.DetailVo;
 import com.example.seckilldemo.vo.GoodsVo;
 import com.example.seckilldemo.vo.RespBean;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.omg.CORBA.TIMEOUT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
@@ -33,6 +36,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Controller
 @RequestMapping("goods")
+@Api(value = "商品", tags = "商品")
 public class GoodsController {
 
     @Autowired
@@ -45,7 +49,8 @@ public class GoodsController {
     private ThymeleafViewResolver thymeleafViewResolver;
 
 
-    @RequestMapping(value = "/toList2", produces = "text/html;charset=utf-8")
+    @ApiOperation("商品列表")
+    @RequestMapping(value = "/toList2", produces = "text/html;charset=utf-8", method = RequestMethod.GET)
     @ResponseBody
     public String toList2(Model model, TUser user, HttpServletRequest request, HttpServletResponse response) {
         ValueOperations valueOperations = redisTemplate.opsForValue();
@@ -65,7 +70,8 @@ public class GoodsController {
         return html;
     }
 
-    @RequestMapping(value = "/goodsDetail2/{goodsId}", produces = "text/html;charset=utf-8")
+    @ApiOperation("商品详情")
+    @RequestMapping(value = "/goodsDetail2/{goodsId}", produces = "text/html;charset=utf-8", method = RequestMethod.GET)
     @ResponseBody
     public String toDetail2(Model model, TUser user, @PathVariable Long goodsId, HttpServletRequest request, HttpServletResponse response) {
         ValueOperations valueOperations = redisTemplate.opsForValue();
@@ -109,8 +115,8 @@ public class GoodsController {
         return html;
     }
 
-
-    @RequestMapping(value = "/toList", produces = "text/html;charset=utf-8")
+    @ApiOperation("商品列表")
+    @RequestMapping(value = "/toList", produces = "text/html;charset=utf-8", method = RequestMethod.GET)
     @ResponseBody
     public String toList(Model model, TUser user, HttpServletRequest request, HttpServletResponse response) {
         ValueOperations valueOperations = redisTemplate.opsForValue();
@@ -130,7 +136,8 @@ public class GoodsController {
         return html;
     }
 
-    @RequestMapping(value = "/detail/{goodsId}")
+    @ApiOperation("商品详情")
+    @RequestMapping(value = "/detail/{goodsId}", method = RequestMethod.GET)
     @ResponseBody
     public RespBean toDetail(TUser user, @PathVariable Long goodsId) {
         ValueOperations valueOperations = redisTemplate.opsForValue();

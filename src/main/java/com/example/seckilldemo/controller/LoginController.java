@@ -3,6 +3,7 @@ package com.example.seckilldemo.controller;
 import com.example.seckilldemo.service.ITUserService;
 import com.example.seckilldemo.vo.LoginVo;
 import com.example.seckilldemo.vo.RespBean;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/login")
 @Slf4j
+@Api(value = "登录", tags = "登录")
 public class LoginController {
 
 
@@ -49,7 +51,8 @@ public class LoginController {
     }
 
 
-    @RequestMapping("/doLogin")
+    @ApiOperation("登录接口")
+    @RequestMapping(value = "/doLogin", method = RequestMethod.GET)
     @ResponseBody
     public RespBean doLogin(@Valid LoginVo loginVo, HttpServletRequest request, HttpServletResponse response) {
         log.info("{}", loginVo);
