@@ -52,7 +52,7 @@ public class LoginController {
 
 
     @ApiOperation("登录接口")
-    @RequestMapping(value = "/doLogin", method = RequestMethod.GET)
+    @RequestMapping(value = "/doLogin", method = RequestMethod.POST)
     @ResponseBody
     public RespBean doLogin(@Valid LoginVo loginVo, HttpServletRequest request, HttpServletResponse response) {
         log.info("{}", loginVo);
