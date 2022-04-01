@@ -1,6 +1,8 @@
 package com.example.seckilldemo.vo;
 
 
+import com.example.seckilldemo.validator.IsMobile;
+
 import javax.validation.constraints.NotNull;
 
 /**
