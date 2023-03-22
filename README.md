@@ -1,94 +1,67 @@
 # B站秒杀项目
 
-## 介绍
+来源：https://gitee.com/guizhizhe/seckill_demo， 该项目为最终结果，对前期一步步学习可能存在麻烦，因此添加了一些中间过程接口，可以先看该项目的文档说明，在README-default.md也拷贝了一份
 
-跟着B站视频敲代码而来[地址](https://www.bilibili.com/video/BV1sf4y1L7KE )
-
-## 视频内容
-
-1. 项目框架搭建
-   1. SpringBoot环境搭建
-   2. 集成Thymeleaf,RespBean
-   3. MyBatis
-2. 分布式会话
-   1. 用户登录
-      1. 设计数据库
-      2. 明文密码二次MD5加密
-      3. 参数校验+全局异常处理
-   2. 共享Session
-      1. SpringSession
-      2. Redis
-3. 功能开发
-   1. 商品列表
-   2. 商品详情
-   3. 秒杀
-   4. 订单详情
-4. 系统压测
-   1. JMeter
-   2. 自定义变量模拟多用户
-   3. JMeter命令行的使用
-   4. 正式压测
-      1. 商品列表
-      2. 秒杀
-5. 页面优化
-   1. 页面缓存+URL缓存+对象缓存
-   2. 页面静态化，前后端分离
-   3. 静态资源优化
-   4. CDN优化
-6. 接口优化
-   1. Redis预减库存减少数据库的访问
-   2. 内存标记减少Redis的访问
-   3. RabbitMQ异步下单
-      1. SpringBoot整合RabbitMQ
-      2. 交换机
-7. 安全优化
-   1. 秒杀接口地址隐藏
-   2. 算术验证码
-   3. 接口防刷
-8. 主流的秒杀方案
-
-## 软件架构
-
-|                         技术                          | 版本  |                            说明                            |
-| :---------------------------------------------------: | :---: | :--------------------------------------------------------: |
-|                      Spring Boot                      | 2.6.4 |                                                            |
-|                         MySQL                         |   8   |                                                            |
-| [MyBatis Plus](https://github.com/baomidou/generator) | 3.5.1 |                                                            |
-|                       Swagger2                        | 2.9.2 |        Swagger-models2.9.2版本报错，使用的是1.5.22         |
-|         [Kinfe4j](https://doc.xiaominfo.com)          | 2.0.9 | 感觉比Swagger UI漂亮的一个工具，访问地址是ip:端口/doc.html |
-|                   Spring Boot Redis                   |       |                                                            |
-
-
-
-## 使用说明
-
-登录页面：http://localhost:8080/login/toLogin
-
-接口文档页面：http://localhost:8080/doc.html#/home
-
-代码生成器：https://gitee.com/guizhizhe/code-generator.git
-
-sqldoc：创建表语句和回滚压测数据
-
-sftware：是从B站用户@登就等觉得 下载的一些视频中程序的安装包（我没有使用，我是用的是docker里面）
-
-document：是从B站用户@登就等觉得 下载的系统说明文档，如果根据视频看的话，可以看文档里面，里面的代码是根据视频进度编写的，但是不要复制，pdf会有问题建议手打。
+视频：https://www.bilibili.com/video/BV1sf4y1L7KE
 
 
 
 
 
-## 注意事项
+### 接口说明
 
-1. 代码运行时一定要用localhost，原因可以看下CookieUtil类
-2. 代码生成时没有加去掉表头，导致代码和视频中不一样，命名也有的不一样，
+SekillController: 三个阶段
+
+- doSeckill1:  对应到 **P43**，         update排他+唯一索引实现秒杀(没有做order页面静态化)
+- doSeckill2：对应到 **P53**，         order界面静态化 +  redis预减库存 + 内存标记 + MQ
+- doSeckill ：最终秒杀方案          一些安全上的优化
+
+对应到发起请求界面static\goodsDetail.html 52~67行
 
 
 
-## 敲代码后感
+### 页面说明
 
-​	首先要感谢B站用户@登就等觉得，从他那下载的静态资源，不然这个视频就看不下去了。
+前后端结合项目，两种处理页面方式，二者对比可以看 static和templates下的orderDetail 页面
 
-​	看视频，一定要敲，敲多了就会了，编程就是你知道的多了就牛逼了。
+1. 前端页面在template下，通过controller返回访问，并`model.add添加数据`。`h:text="${goods.goodsName}"`区数据， 不可直接访问
+2. 在static下的页面可直接访问，并在页面加载时ajax请求返回json数据，`$("#goodsName").text(goods.goodsName);`根据id注入数据。（相当于前后端分离）
 
-​	写到这吧，后面学WebStock，有推荐的视频可以留言。
+在项目初始化搭建过程中，都是方法1，但到P39开始做页面静态化orderDetail 转到方法2，代码中直接是方法2
+
+
+
+### 环境搭建
+
+需要安装配置Mysql、Redis、RabbitMQ
+
+**Redis**：本地安装，或者远程linux服务器直接docker装，不装项目起不来。
+
+**RabbitMQ**：推荐RabbitMQ直接docker安装，两行直接搞定，不行再看看防火墙、安全组。（不安装也能学到P44）
+
+```bash
+docker pull rabbitmq
+
+docker run \
+ -e RABBITMQ_DEFAULT_USER=guest \
+ -e RABBITMQ_DEFAULT_PASS=guest \
+ --name mq \
+ --hostname mq1 \
+ -p 15672:15672 \
+ -p 5672:5672 \
+ -d \
+ rabbitmq:3-management
+```
+
+
+
+### 注意事项
+
+1.在该项目中核心就是秒杀的实现：不能超卖、不能重复抢
+
+- 不能超卖在doSeckill2中通过update的排他性实现。而在doSeckill3中通过redis预减库存(redis的原子性实现)
+- 不能重复抢通过唯一索引实现，默认建表时没有添加，压测可以把用户加少点商品多一点就可以复现重复购买
+
+2.优化不过就是把数据库的重复访问，能放到redis就放到redis；而如果访问redis太多了就再加一层内存标记
+
+3.redis和mysql要么都在远程，要么都在本地，否则可能会出现redis缓存优化了但QPS没提升

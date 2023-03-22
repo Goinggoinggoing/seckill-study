@@ -43,7 +43,7 @@ COMMENT '订单表'
 CREATE TABLE `t_seckill_goods`(
 	`id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '秒杀商品ID',
 	`goods_id` BIGINT(20) NOT NULL COMMENT '商品ID',
-	`seckill_price` DECIMAL(10,2) NOT NULL COMMENT '秒杀家',
+	`seckill_price` DECIMAL(10,2) NOT NULL COMMENT '秒杀价',
 	`stock_count` INT(10) NOT NULL  COMMENT '库存数量',
 	`start_date` datetime NOT NULL  COMMENT '秒杀开始时间',
 	`end_date` datetime NOT NULL COMMENT '秒杀结束时间',
@@ -61,6 +61,12 @@ CREATE TABLE `t_seckill_order` (
 )ENGINE = INNODB AUTO_INCREMENT=3 DEFAULT CHARSET = utf8mb4
 COMMENT '秒杀订单表'
 ;
+
+INSERT INTO `t_goods` values(1,'iphone12', 'iphone12 64GB', '/img/iphone12.png', 'Iphone 12 64', '6299.00', 100),(2,'iphone12 pro', 'iphone12 pro 64GB', '/img/iphone12pro.png', 'Iphone 12 pro 64', '9299.00', 100);
+INSERT INTO `t_seckill_goods` values(1, 1, '629', 10, '2020-11-01 08:00:00', '2020-11-01 09:00:00'),(2, 2, '929', 10, '2020-11-01 08:00:00', '2020-11-01 09:00:00');
+
+
+
 ------------------------------------------------
 -- 添加索引，讲到时在加
 ALTER TABLE `seckill`.`t_seckill_order` 

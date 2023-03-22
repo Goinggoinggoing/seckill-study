@@ -35,7 +35,8 @@ public class TSeckillOrderServiceImpl extends ServiceImpl<TSeckillOrderMapper, T
         if (null != tSeckillOrder) {
             return tSeckillOrder.getOrderId();
         } else if (redisTemplate.hasKey("isStockEmpty:" + goodsId)) {
-            return -1L;
+            return 0L;
+//            return -1L; 个人感觉isStockEmpty没有意义 所以忽略了这一步
         } else {
             return 0L;
         }

@@ -1,5 +1,6 @@
 package com.example.seckilldemo.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.seckilldemo.config.AccessLimit;
 import com.example.seckilldemo.entity.TOrder;
@@ -198,11 +199,6 @@ public class SeKillController implements InitializingBean {
         return RespBean.success(0);
 
 
-
-
-
-
-
         /*
 //        model.addAttribute("user", user);
         GoodsVo goodsVo = itGoodsService.findGoodsVobyGoodsId(goodsId);
@@ -237,25 +233,76 @@ public class SeKillController implements InitializingBean {
      * @operation add
      * @date 11:36 上午 2022/3/4
      **/
-    @ApiOperation("秒杀功能-废弃")
-    @RequestMapping(value = "/doSeckill2", method = RequestMethod.POST)
+    @ApiOperation("秒杀功能-最基础的秒杀功能")
+    @RequestMapping(value = "/doSeckill1", method = RequestMethod.POST)
     public String doSecKill2(Model model, TUser user, Long goodsId) {
+//        System.out.println("in doSeckill1");
         model.addAttribute("user", user);
         GoodsVo goodsVo = itGoodsService.findGoodsVobyGoodsId(goodsId);
         if (goodsVo.getStockCount() < 1) {
             model.addAttribute("errmsg", RespBeanEnum.EMPTY_STOCK.getMessage());
             return "secKillFail";
         }
-        //判断是否重复抢购
-        TSeckillOrder seckillOrder = itSeckillOrderService.getOne(new QueryWrapper<TSeckillOrder>().eq("user_id", user.getId()).eq("goods_id", goodsId));
-        if (seckillOrder != null) {
+
+        // 方法二： 使用redis判断是否重复抢购
+        TSeckillOrder tSeckillOrder = (TSeckillOrder) redisTemplate.opsForValue().get("order:" + user.getId() + ":" + goodsId);
+        if (tSeckillOrder != null) {
             model.addAttribute("errmsg", RespBeanEnum.REPEATE_ERROR.getMessage());
             return "secKillFail";
         }
+//        // 方法一：判断是否重复抢购
+//        TSeckillOrder seckillOrder = itSeckillOrderService.getOne(new QueryWrapper<TSeckillOrder>().eq("user_id", user.getId()).eq("goods_id", goodsId));
+//        if (seckillOrder != null) {
+//            model.addAttribute("errmsg", RespBeanEnum.REPEATE_ERROR.getMessage());
+//            return "secKillFail";
+//        }
+
         TOrder tOrder = orderService.secKill(user, goodsVo);
         model.addAttribute("order", tOrder);
         model.addAttribute("goods", goodsVo);
         return "orderDetail";
+    }
+
+
+    /**
+     * 秒杀功能
+     *
+     * @param model
+     * @param user
+     * @param goodsId
+     * @return java.lang.String
+     * @author LC
+     * @operation add
+     * @date 11:36 上午 2022/3/4
+     **/
+    @ApiOperation("秒杀功能3-在2基础上加上 静态化  MQ  redis")  // p54
+    @RequestMapping(value = "/doSeckill2", method = RequestMethod.POST)
+    @ResponseBody
+    public RespBean doSecKill3(Model model, TUser user, Long goodsId) {
+//        System.out.println("in doSeckill2");
+
+        Long v = redisTemplate.opsForValue().decrement("seckillGoods:" + goodsId);
+        if (v < 0){
+            redisTemplate.opsForValue().increment("seckillGoods:" + goodsId);
+            return RespBean.error(RespBeanEnum.EMPTY_STOCK);
+        }
+
+        // 方法二： 使用redis判断是否重复抢购
+        TSeckillOrder tSeckillOrder = (TSeckillOrder) redisTemplate.opsForValue().get("order:" + user.getId() + ":" + goodsId);
+        if (tSeckillOrder != null) {
+            return RespBean.error(RespBeanEnum.REPEATE_ERROR);
+        }
+//        // 方法一：判断是否重复抢购
+//        TSeckillOrder seckillOrder = itSeckillOrderService.getOne(new QueryWrapper<TSeckillOrder>().eq("user_id", user.getId()).eq("goods_id", goodsId));
+//        if (seckillOrder != null) {
+//            return RespBean.error(RespBeanEnum.REPEATE_ERROR);
+//        }
+
+        SeckillMessage seckillMessage = new SeckillMessage(user, goodsId);
+
+        mqSender.sendSeckillMessage(JSON.toJSONString(seckillMessage));
+
+        return RespBean.success();
     }
 
     /**

@@ -70,6 +70,28 @@ public class GoodsController {
         return html;
     }
 
+
+    @ApiOperation("商品列表")
+    @RequestMapping(value = "/toList", produces = "text/html;charset=utf-8", method = RequestMethod.GET)
+    @ResponseBody
+    public String toList(Model model, TUser user, HttpServletRequest request, HttpServletResponse response) {
+        ValueOperations valueOperations = redisTemplate.opsForValue();
+        String html = (String) valueOperations.get("goodsList");
+        if (!StringUtils.isEmpty(html)) {
+            return html;
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("goodsList", itGoodsService.findGoodsVo());
+
+        WebContext webContext = new WebContext(request, response, request.getServletContext(), request.getLocale(), model.asMap());
+        html = thymeleafViewResolver.getTemplateEngine().process("goodsList", webContext);
+        if (!StringUtils.isEmpty(html)) {
+            valueOperations.set("goodsList", html, 60, TimeUnit.SECONDS);
+        }
+        return html;
+    }
+
     @ApiOperation("商品详情")
     @RequestMapping(value = "/goodsDetail2/{goodsId}", produces = "text/html;charset=utf-8", method = RequestMethod.GET)
     @ResponseBody
@@ -112,27 +134,6 @@ public class GoodsController {
             valueOperations.set("goodsDetail:" + goodsId, html, 60, TimeUnit.SECONDS);
         }
 
-        return html;
-    }
-
-    @ApiOperation("商品列表")
-    @RequestMapping(value = "/toList", produces = "text/html;charset=utf-8", method = RequestMethod.GET)
-    @ResponseBody
-    public String toList(Model model, TUser user, HttpServletRequest request, HttpServletResponse response) {
-        ValueOperations valueOperations = redisTemplate.opsForValue();
-        String html = (String) valueOperations.get("goodsList");
-        if (!StringUtils.isEmpty(html)) {
-            return html;
-        }
-
-        model.addAttribute("user", user);
-        model.addAttribute("goodsList", itGoodsService.findGoodsVo());
-
-        WebContext webContext = new WebContext(request, response, request.getServletContext(), request.getLocale(), model.asMap());
-        html = thymeleafViewResolver.getTemplateEngine().process("goodsList", webContext);
-        if (!StringUtils.isEmpty(html)) {
-            valueOperations.set("goodsList", html, 60, TimeUnit.SECONDS);
-        }
         return html;
     }
 

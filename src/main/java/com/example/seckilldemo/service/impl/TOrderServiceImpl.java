@@ -73,15 +73,16 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
                 .eq("goods_id", goodsVo.getId())
                 .gt("stock_count", 0)
         );
-//        if (!seckillGoodsResult) {
-//            return null;
-//        }
-
-        if (seckillGoods.getStockCount() < 1) {
-            //判断是否还有库存
-            valueOperations.set("isStockEmpty:" + goodsVo.getId(), "0");
+        // 方案1 防超卖，直接结束，可以尝试用doSeckill2并且使用方案2，压测会出现超卖
+        if (!seckillGoodsResult) {
             return null;
         }
+//        // 方案2 这个不行 会超卖， 但在mq优化后表面上不会出现，因为mq进来的只有10条了，超卖在redis预减解决了
+//        if (seckillGoods.getStockCount() < 1) {
+//            //判断是否还有库存
+//            valueOperations.set("isStockEmpty:" + goodsVo.getId(), "0");
+//            return null;
+//        }
 
         //生成订单
         TOrder order = new TOrder();
@@ -101,7 +102,7 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
         tSeckillOrder.setOrderId(order.getId());
         tSeckillOrder.setGoodsId(goodsVo.getId());
         itSeckillOrderService.save(tSeckillOrder);
-        redisTemplate.opsForValue().set("order:" + user.getId() + ":" + goodsVo.getId(), tSeckillOrder);
+        redisTemplate.opsForValue().set("order:" + user.getId() + ":" + goodsVo.getId(), tSeckillOrder, 1, TimeUnit.MINUTES);
         return order;
     }
 

@@ -49,10 +49,24 @@
                     <div class="form-inline">
                         <img id="captchaImg" width="130" height="32" onclick="refreshCaptcha()" style="display: none">
                         <input id="captcha" class="form-control" style="display: none">
-                        <button class="btn btn-primary" type="submit" id="buyButton"
-                                onclick="getSeckillPath()">立即秒杀
+<!--                        &lt;!&ndash; 基础秒杀 doSeckill1&ndash;&gt;-->
+                        <form id="secKillForm" method="post" action="/seckill/doSeckill1">
                             <input type="hidden" name="goodsId" id="goodsId">
-                        </button>
+                            <button class="btn btn-primary btn-block" type="submit" id="buyButton">立即秒杀1</button>
+                        </form>
+
+<!--                         静态化 redis预减+MQ优化 对应doSeckill2-->
+<!--                        <button class="btn btn-primary" type="submit" id="buyButton"-->
+<!--                                onclick="doSecKill2()">立即秒杀2-->
+<!--                            <input type="hidden" name="goodsId" id="goodsId">-->
+<!--                        </button>-->
+
+                        <!-- 最终方案  添加安全等-->
+<!--                            <button class="btn btn-primary" type="submit" id="buyButton"-->
+<!--                                    onclick="getSeckillPath()">立即秒杀-->
+<!--                                <input type="hidden" name="goodsId" id="goodsId">-->
+<!--                            </button>-->
+
                     </div>
                 </div>
             </td>
@@ -112,6 +126,28 @@
     function doSecKill(path) {
         $.ajax({
             url: 'seckill/' + path + '/doSeckill',
+            type: "POST",
+            data: {
+                goodsId: $('#goodsId').val()
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                    // window.location.href="/orderDetail.html?orderId="+data.object.id;
+                    getResult($("#goodsId").val());
+                } else {
+                    layer.msg(data.message);
+                }
+            }, error: function () {
+                layer.msg("客户端请求出错");
+            }
+
+        });
+    }
+
+    //秒杀方法2: 1基础上优化： 静态化 redis预减 MQ优化
+    function doSecKill2() {
+        $.ajax({
+            url: 'seckill/doSeckill2',
             type: "POST",
             data: {
                 goodsId: $('#goodsId').val()

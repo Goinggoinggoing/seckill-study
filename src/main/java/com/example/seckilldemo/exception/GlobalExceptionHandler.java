@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * @date 2022/3/2 5:33 下午
  * @ClassName: GlobalExceptionHandler
  */
-@RestControllerAdvice
+//@RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
+//    @ExceptionHandler(Exception.class)
     public RespBean ExceptionHandler(Exception e) {
         if (e instanceof GlobalException) {
             GlobalException exception = (GlobalException) e;

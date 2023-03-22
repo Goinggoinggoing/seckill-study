@@ -1,5 +1,6 @@
 package com.example.seckilldemo.rabbitmq;
 
+import com.example.seckilldemo.config.RabbitMQTopicConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;

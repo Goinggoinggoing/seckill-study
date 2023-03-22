@@ -22,9 +22,9 @@ spring:
     cache: false
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/seckill?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/seckill?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
-    password: 123456
+    password: password
     hikari:
       pool-name: DateHikariCP
       minimum-idle: 5
@@ -44,6 +44,7 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
+#    password: password
     database: 0
     timeout: 10000ms
     lettuce:
@@ -55,7 +56,8 @@ spring:
         #最大空闲连接，默认8
         max-idle: 200
 
-#RabbitMQ
+
+
   rabbitmq:
     #服务器
     host: 127.0.0.1

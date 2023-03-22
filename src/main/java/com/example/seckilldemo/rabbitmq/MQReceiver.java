@@ -1,5 +1,6 @@
 package com.example.seckilldemo.rabbitmq;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.seckilldemo.entity.TSeckillOrder;
 import com.example.seckilldemo.entity.TUser;
@@ -50,7 +51,7 @@ public class MQReceiver {
     @RabbitListener(queues = "seckillQueue")
     public void receive(String message) {
         log.info("接收消息：" + message);
-        SeckillMessage seckillMessage = JsonUtil.jsonStr2Object(message, SeckillMessage.class);
+        SeckillMessage seckillMessage = JSON.parseObject(message, SeckillMessage.class);
         Long goodsId = seckillMessage.getGoodsId();
         TUser user = seckillMessage.getTUser();
         GoodsVo goodsVo = itGoodsServicel.findGoodsVobyGoodsId(goodsId);
