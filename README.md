@@ -1,4 +1,4 @@
-# B站秒杀项目
+# seckill-study
 
 来源：https://gitee.com/guizhizhe/seckill_demo， 该项目为最终结果，对前期一步步学习可能存在麻烦，因此添加了一些中间过程接口，可以先看该项目的文档说明，在README-default.md也拷贝了一份
 
@@ -65,3 +65,6 @@ docker run \
 2.优化不过就是把数据库的重复访问，能放到redis就放到redis；而如果访问redis太多了就再加一层内存标记
 
 3.redis和mysql要么都在远程，要么都在本地，否则可能会出现redis缓存优化了但QPS没提升
+
+
+
