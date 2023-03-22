@@ -1,6 +1,7 @@
 # seckill-study
 笔记：https://goinggoinggoing.github.io/2023/03/20/B站秒杀项目
-来源：https://gitee.com/guizhizhe/seckill_demo， 原项目代码为最终结果，对前期一步步学习可能存在麻烦，因此本项目添加了一些中间过程接口，可以先看原项目的文档说明，在README-default.md也拷贝了一份
+
+项目来源：https://gitee.com/guizhizhe/seckill_demo， 原项目代码为最终结果，对前期一步步学习可能存在麻烦，因此本项目添加了一些中间过程接口，可以先看原项目的文档说明，在README-default.md也拷贝了一份
 
 视频：https://www.bilibili.com/video/BV1sf4y1L7KE
 
