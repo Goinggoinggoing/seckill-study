@@ -154,7 +154,7 @@ public class SeKillController implements InitializingBean {
     }
 
     /**
-     * 秒杀功能
+     * 最终秒杀功能
      *
      * @param user
      * @param goodsId
@@ -223,8 +223,8 @@ public class SeKillController implements InitializingBean {
     }
 
     /**
-     * 秒杀功能-废弃
-     *
+     * 秒杀功能-1
+     * update排他+唯一索引实现秒杀(没有做order页面静态化)
      * @param model
      * @param user
      * @param goodsId
@@ -235,7 +235,7 @@ public class SeKillController implements InitializingBean {
      **/
     @ApiOperation("秒杀功能-最基础的秒杀功能")
     @RequestMapping(value = "/doSeckill1", method = RequestMethod.POST)
-    public String doSecKill2(Model model, TUser user, Long goodsId) {
+    public String doSecKill1(Model model, TUser user, Long goodsId) {
 //        System.out.println("in doSeckill1");
         model.addAttribute("user", user);
         GoodsVo goodsVo = itGoodsService.findGoodsVobyGoodsId(goodsId);
@@ -265,8 +265,8 @@ public class SeKillController implements InitializingBean {
 
 
     /**
-     * 秒杀功能
-     *
+     * 秒杀功能 2
+     * order界面静态化 +  redis预减库存 + 内存标记 + MQ
      * @param model
      * @param user
      * @param goodsId
@@ -275,10 +275,10 @@ public class SeKillController implements InitializingBean {
      * @operation add
      * @date 11:36 上午 2022/3/4
      **/
-    @ApiOperation("秒杀功能3-在2基础上加上 静态化  MQ  redis")  // p54
+    @ApiOperation("秒杀功能2-在1基础上加上 静态化  MQ  redis")  // p54
     @RequestMapping(value = "/doSeckill2", method = RequestMethod.POST)
     @ResponseBody
-    public RespBean doSecKill3(Model model, TUser user, Long goodsId) {
+    public RespBean doSecKill2(Model model, TUser user, Long goodsId) {
 //        System.out.println("in doSeckill2");
 
         Long v = redisTemplate.opsForValue().decrement("seckillGoods:" + goodsId);
