@@ -59,7 +59,7 @@ docker run \
 
 1.在该项目中核心就是秒杀的实现：不能超卖、不能重复抢
 
-- 不能超卖在doSeckill2中通过update的排他性实现。而在doSeckill3中通过redis预减库存(redis的原子性实现)
+- 不能超卖在doSeckill1中通过update的排他性实现(乐观锁)。而在doSeckill2中通过redis预减库存(redis的原子性实现)
 - 不能重复抢通过唯一索引实现，默认建表时没有添加，压测可以把用户加少点商品多一点就可以复现重复购买
 
 2.优化不过就是把数据库的重复访问，能放到redis就放到redis；而如果访问redis太多了就再加一层内存标记
