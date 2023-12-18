@@ -36,6 +36,8 @@ SekillController: 三个阶段
 
 需要安装配置Mysql、Redis、RabbitMQ
 
+**Mysql**: 建表语句 `sqldoc/创建t_user.sql`
+
 **Redis**：本地安装，或者远程linux服务器直接docker装，不装项目起不来。
 
 **RabbitMQ**：推荐RabbitMQ直接docker安装，两行直接搞定，不行再看看防火墙、安全组。（不安装也能学到P44）
