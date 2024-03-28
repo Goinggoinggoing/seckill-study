@@ -46,8 +46,8 @@ SekillController: 三个阶段
 docker pull rabbitmq
 
 docker run \
- -e RABBITMQ_DEFAULT_USER=guest \
- -e RABBITMQ_DEFAULT_PASS=guest \
+ -e RABBITMQ_DEFAULT_USER=itcast \
+ -e RABBITMQ_DEFAULT_PASS=123123 \
  --name mq \
  --hostname mq1 \
  -p 15672:15672 \
@@ -55,7 +55,7 @@ docker run \
  -d \
  rabbitmq:3-management
 ```
-
+访问http://localhost:8080/login/toLogin， 账号密码 1000 123456
 
 
 ### 注意事项
